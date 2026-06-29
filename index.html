@@ -57,21 +57,61 @@
   </div>
 
   <main>
-    <!-- ░░ SCENE 1 — THESIS HERO ░░ -->
-    <section class="scene scene--full hero wrap">
-      <div>
-        <p class="eyebrow hero__eyebrow" data-reveal>Frank Wu — UI/UX Designer · Sydney → Taipei · Open to work</p>
-        <h1 class="hero__title" data-reveal data-reveal-delay="1">I design<br>technology that<br>gets out of<br>your <span class="accent">way.</span></h1>
-        <p class="hero__lead lead" data-reveal data-reveal-delay="2">The best interface is the one you barely notice. I turn research and complexity into products that feel calm, obvious, and quietly inevitable.</p>
-        <div class="hero__actions" data-reveal data-reveal-delay="3">
-          <a href="projects.html" class="btn btn--primary" data-magnetic>See the proof
-            <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-          </a>
-          <a href="about.html" class="btn btn--ghost" data-magnetic>How I think</a>
+    <!-- ░░ SCENE 1 — PORTAL HERO ░░ -->
+    <section class="pt-stage" aria-label="Introduction">
+      <div class="pt-sticky">
+        <!-- the world beyond the logo window (CSS-3D, themed) -->
+        <div class="pt-scene"><div class="pt-inner">
+          <div class="pt-layer pt-l1"><img src="assets/images/smart_station_card_image.png" alt="" loading="eager"></div>
+          <div class="pt-layer pt-l2"><img src="assets/images/career_course_card_image.png" alt="" loading="eager"></div>
+          <div class="pt-layer pt-l3"><img src="assets/images/one_shop_gen_image.png" alt="" loading="eager"></div>
+          <div class="pt-layer pt-l4"><img src="assets/images/abstract art.png" alt="" loading="eager"></div>
+        </div></div>
+
+        <!-- themed field with a logo-shaped window that zooms open -->
+        <div class="pt-window">
+          <svg viewBox="0 0 2000 2000" preserveAspectRatio="xMidYMid slice">
+            <defs><mask id="ptWin">
+              <rect x="-3000" y="-3000" width="8000" height="8000" fill="#fff"/>
+              <g class="pt-hole" fill="#000">
+                <polygon points="818.61 886.07 1022.09 1569.04 1180.35 1569.04 1270.78 1207.3 1338.61 1569.04 1572.87 1569.04 1924 416 1644.52 416 1429.04 1136.26 1406.43 890.78 1157.74 890.78 1067.3 1136.26 1022.09 886.07 818.61 886.07"/>
+                <polygon points="670.78 890.78 738.61 1133.26 484 1132.26 340 1568.04 52 1569.04 388 416 1492.7 416 1416.87 658.48 628 657.48 556 889.78 670.78 890.78"/>
+              </g>
+            </mask></defs>
+            <rect class="pt-paint" x="-3000" y="-3000" width="8000" height="8000" mask="url(#ptWin)"/>
+          </svg>
         </div>
-      </div>
-      <div style="margin-top:auto; padding-top: var(--space-7); display:flex; justify-content:center;">
-        <span class="scroll-cue" data-reveal>Scroll</span>
+
+        <!-- proposition that surfaces deep in the tunnel -->
+        <div class="pt-hook">
+          <div>
+            <span class="k">The promise</span>
+            <p class="pt-hook__line">Technology,<br>made <span class="accent">invisible.</span></p>
+          </div>
+        </div>
+
+        <!-- intro HUD (real nav stays above this) -->
+        <div class="pt-hud">
+          <div class="pt-intro">
+            <span class="k">UI/UX Designer · Sydney → Taipei</span>
+            <h1>Look closer.<br>Step through.</h1>
+            <p>I’m Frank — I turn research and complexity into products that feel calm, obvious, and quietly inevitable. Move your cursor to look in; scroll to step inside the work.</p>
+          </div>
+          <div class="pt-cue">Scroll</div>
+        </div>
+
+        <!-- next section rises up (convex top) as the portal ends -->
+        <div class="pt-riser">
+          <div class="pt-riser__in">
+            <h2>Come on in.</h2>
+            <div class="pt-riser__cta">
+              <a href="projects.html" class="btn btn--primary" data-magnetic>See the work
+                <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+              </a>
+              <a href="about.html" class="btn btn--ghost" data-magnetic>About me</a>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
