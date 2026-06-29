@@ -137,9 +137,16 @@
       var label = document.createElement("span"); label.className = "cursor-ring__label";
       ring.appendChild(label);
       document.body.append(dot, ring); document.body.classList.add("has-cursor");
-      var rx = 0, ry = 0, mx = 0, my = 0;
-      window.addEventListener("mousemove", function (e) { mx = e.clientX; my = e.clientY; dot.style.left = mx + "px"; dot.style.top = my + "px"; });
-      (function loop() { rx += (mx - rx) * 0.18; ry += (my - ry) * 0.18; ring.style.left = rx + "px"; ring.style.top = ry + "px"; requestAnimationFrame(loop); })();
+      var rx = 0, ry = 0, mx = 0, my = 0, craf = null;
+      function ringTick() {
+        rx += (mx - rx) * 0.18; ry += (my - ry) * 0.18;
+        ring.style.left = rx + "px"; ring.style.top = ry + "px";
+        if (Math.abs(mx - rx) > 0.1 || Math.abs(my - ry) > 0.1) craf = requestAnimationFrame(ringTick); else craf = null;
+      }
+      window.addEventListener("mousemove", function (e) {
+        mx = e.clientX; my = e.clientY; dot.style.left = mx + "px"; dot.style.top = my + "px";
+        if (!craf) craf = requestAnimationFrame(ringTick);
+      });
       document.querySelectorAll("a, button, [data-magnetic], input, textarea").forEach(function (el) {
         el.addEventListener("mouseenter", function () { ring.classList.add("is-hover"); });
         el.addEventListener("mouseleave", function () { ring.classList.remove("is-hover"); });
@@ -243,7 +250,37 @@
     initPageTransitions();
     initChat();
     initPreloader();
+    initPortal();
   });
+
+  /* ---------- LANDING PORTAL HERO (scroll + cursor driven) ---------- */
+  function initPortal() {
+    var stage = document.querySelector(".pt-stage");
+    if (!stage) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return; /* CSS shows a static state */
+    var root = document.documentElement;
+    var desktop = window.matchMedia("(min-width: 721px)").matches;
+    var mx = 0, my = 0, tmx = 0, tmy = 0, raf = null;
+    function frame() {
+      var max = stage.offsetHeight - window.innerHeight;
+      var sp = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+      mx += (tmx - mx) * 0.08; my += (tmy - my) * 0.08;
+      root.style.setProperty("--pt-p", sp.toFixed(4));
+      root.style.setProperty("--pt-mx", mx.toFixed(4));
+      root.style.setProperty("--pt-my", my.toFixed(4));
+      raf = null;
+      if (Math.abs(tmx - mx) > 0.001 || Math.abs(tmy - my) > 0.001) wake();
+    }
+    function wake() { if (!raf) raf = requestAnimationFrame(frame); }
+    window.addEventListener("scroll", wake, { passive: true });
+    window.addEventListener("resize", wake);
+    if (desktop) window.addEventListener("mousemove", function (e) {
+      tmx = e.clientX / window.innerWidth - 0.5;
+      tmy = e.clientY / window.innerHeight - 0.5;
+      wake();
+    });
+    frame();
+  }
 
   /* ---------- FIRST-LOAD SCREEN (once per session) ---------- */
   function initPreloader() {
@@ -405,12 +442,14 @@
     var ST = window.ScrollTrigger;
     var desktop = window.matchMedia("(min-width: 901px)").matches;
 
-    /* parallax media */
-    document.querySelectorAll("[data-parallax]").forEach(function (el) {
-      var inner = el.querySelector("img, video, .media-ph") || el;
-      gsap.fromTo(inner, { yPercent: -9 }, { yPercent: 9, ease: "none",
-        scrollTrigger: { trigger: el, start: "top bottom", end: "bottom top", scrub: true } });
-    });
+    /* parallax media (desktop only — scroll-linked transforms are costly on mobile) */
+    if (desktop) {
+      document.querySelectorAll("[data-parallax]").forEach(function (el) {
+        var inner = el.querySelector("img, video, .media-ph") || el;
+        gsap.fromTo(inner, { yPercent: -9 }, { yPercent: 9, ease: "none",
+          scrollTrigger: { trigger: el, start: "top bottom", end: "bottom top", scrub: true } });
+      });
+    }
 
     /* count-ups */
     document.querySelectorAll("[data-count]").forEach(function (el) {
@@ -423,16 +462,14 @@
       } });
     });
 
-    /* pinned horizontal scroll (desktop only) */
-    if (desktop) {
-      document.querySelectorAll("[data-horizontal]").forEach(function (sec) {
-        var track = sec.querySelector(".h-track");
-        if (!track) return;
-        var dist = function () { return Math.max(0, track.scrollWidth - window.innerWidth); };
-        gsap.to(track, { x: function () { return -dist(); }, ease: "none",
-          scrollTrigger: { trigger: sec, start: "top top", end: function () { return "+=" + dist(); }, pin: true, scrub: 1, invalidateOnRefresh: true, anticipatePin: 1 } });
-      });
-    }
+    /* pinned horizontal scroll — on all widths, so mobile is forced through it too */
+    document.querySelectorAll("[data-horizontal]").forEach(function (sec) {
+      var track = sec.querySelector(".h-track");
+      if (!track) return;
+      var dist = function () { return Math.max(0, track.scrollWidth - window.innerWidth); };
+      gsap.to(track, { x: function () { return -dist(); }, ease: "none",
+        scrollTrigger: { trigger: sec, start: "top top", end: function () { return "+=" + dist(); }, pin: true, scrub: 1, invalidateOnRefresh: true, anticipatePin: 1 } });
+    });
 
     window.addEventListener("load", function () { ST.refresh(); });
     setTimeout(function () { ST.refresh(); }, 600);
