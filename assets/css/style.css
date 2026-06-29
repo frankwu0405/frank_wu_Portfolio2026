@@ -26,6 +26,7 @@
   --shadow-md:    0 4px 14px rgba(10, 10, 10, 0.08), 0 14px 40px rgba(10, 10, 10, 0.09);
   --shadow-lg:    0 20px 60px rgba(10, 10, 10, 0.16);
   --grain-opacity: 0.022;
+  --pt-scene: #0E0E0C; --pt-word: #1B1B1B;   /* portal: the world beyond the logo (inverse of field) */
 
   /* Typography */
   --font-display: "Anton", "Arial Narrow", "Inter", sans-serif;
@@ -81,6 +82,7 @@
   --shadow-md:    0 10px 30px rgba(0,0,0,0.55);
   --shadow-lg:    0 24px 70px rgba(0,0,0,0.65);
   --grain-opacity: 0.045;
+  --pt-scene: #F2F1EC; --pt-word: #E3E1D9;   /* portal world (inverse) — dark mode */
 }
 
 /* ----------------------------------------------------------------- *
@@ -185,7 +187,7 @@ main { display: block; }
   mix-blend-mode: difference;
 }
 .nav.is-stuck { border: none; }
-.nav__inner { width: 100%; max-width: var(--maxw); margin-inline: auto; padding-inline: var(--gutter); display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); }
+.nav__inner { width: 100%; max-width: none; padding-inline: var(--gutter); display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); }
 .nav__logo { display: inline-flex; align-items: center; }
 .nav__logo img { height: 42px; width: auto; transition: transform var(--dur-1) var(--ease); }
 .nav__logo:hover img { transform: scale(1.06); }
@@ -228,7 +230,6 @@ main { display: block; }
   padding: 1em 1.5em; border-radius: var(--radius-sm);
   border: 1px solid transparent; line-height: 1;
   transition: transform var(--dur-1) var(--ease), background var(--dur-1) var(--ease), color var(--dur-1) var(--ease), border-color var(--dur-1) var(--ease);
-  will-change: transform;
 }
 .btn svg { width: 1.1em; height: 1.1em; }
 .btn--primary { background: var(--text); color: var(--bg); }
@@ -503,7 +504,7 @@ main { display: block; }
 /* ----------------------------------------------------------------- *
    17. REVEAL ANIMATIONS
  * ----------------------------------------------------------------- */
-[data-reveal], .fade-in { opacity: 0; transform: translateY(22px); transition: opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out); will-change: opacity, transform; }
+[data-reveal], .fade-in { opacity: 0; transform: translateY(22px); transition: opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out); }
 [data-reveal].is-revealed, .fade-in.visible { opacity: 1; transform: none; }
 [data-reveal][data-reveal-delay="1"] { transition-delay: 0.08s; }
 [data-reveal][data-reveal-delay="2"] { transition-delay: 0.16s; }
@@ -531,7 +532,7 @@ body.intro-active { overflow: hidden; }
 
 /* Hero line-mask reveal helpers (GSAP animates the inner span) */
 .reveal-line { overflow: hidden; display: block; }
-.reveal-line > span { display: block; will-change: transform; }
+.reveal-line > span { display: block; }
 
 /* Full-page transition overlay */
 .page-veil { position: fixed; inset: 0 0 100% 0; z-index: 9997; background: var(--accent); pointer-events: none; }
@@ -555,7 +556,7 @@ body.intro-active { overflow: hidden; }
 .media-ph__label i { display: block; font-style: normal; font-family: var(--font-display); font-size: var(--step-3); color: var(--accent); margin-bottom: 0.5rem; }
 
 /* 3D tilt */
-[data-tilt] { transform-style: preserve-3d; will-change: transform; transition: transform 0.4s var(--ease); }
+[data-tilt] { transform-style: preserve-3d; transition: transform 0.4s var(--ease); }
 [data-tilt] .tilt-up { transform: translateZ(50px); transform-style: preserve-3d; }
 
 /* parallax media (image overflows its frame and drifts on scroll) */
@@ -672,13 +673,9 @@ body.intro-active { overflow: hidden; }
 
 @media (max-width: 720px) {
   :root { --nav-h: 64px; }
-  /* On mobile the drawer is opaque, so drop the blend and use theme colors
-     with a translucent bar for legibility. */
-  .nav { mix-blend-mode: normal; background: color-mix(in srgb, var(--bg) 82%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); }
+  /* Mobile uses the same transparent invert (mix-blend) as desktop so the bar
+     doesn't break the portal illusion. Only the open drawer stays opaque. */
   .nav__logo img { height: 38px; }
-  [data-theme="light"] .nav__logo img { filter: brightness(0); }
-  .theme-toggle, .nav__burger { color: var(--text); border-color: var(--line); }
-  .nav__burger span, .nav__burger span::before, .nav__burger span::after { background: var(--text); }
   .nav__links { position: fixed; inset: 0 0 0 auto; width: min(78vw, 360px); height: 100dvh; flex-direction: column; align-items: flex-start; justify-content: flex-start; gap: var(--space-1); padding: calc(var(--nav-h) + 1.5rem) var(--space-6) var(--space-6); background: var(--bg); border-left: 1px solid var(--line); transform: translateX(100%); transition: transform var(--dur-2) var(--ease); }
   .nav__links.is-open { transform: translateX(0); }
   /* inside the solid drawer, drop the blend so links stay legible */
@@ -713,19 +710,17 @@ html.lenis, html.lenis body { height: auto; }
 @media (max-width: 900px) {
   .imwork { grid-template-columns: 1fr; min-height: auto; gap: var(--space-5); }
   .imwork--rev { direction: ltr; }
-  .h-panel { width: 82vw; } .h-panel--intro { width: 82vw; }
+  .h-panel { width: 80vw; } .h-panel--intro { width: 80vw; }
   .hero3d { grid-template-columns: 1fr; gap: var(--space-7); }
   .hero-card { max-width: 300px; }
-  .h-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; scroll-snap-type: x proximity; }
-  .h-scroll.scene--full { min-height: auto; padding-block: var(--space-9); }
-  .h-track { padding-bottom: var(--space-4); }
-  .h-panel { scroll-snap-align: start; }
+  .h-scroll.scene--full { min-height: 100vh; }   /* keep full height so it pins on mobile too */
+  .h-track { padding-inline: 9vw; }               /* breathing room so cards don't touch the edges */
 }
 @media (max-width: 720px) {
   .scene--full { min-height: auto; padding-block: clamp(4rem, 16vh, 7rem); }
   .big-num { font-size: clamp(3.5rem, 22vw, 7rem); }
   .imwork__title { font-size: var(--step-3); }
-  .h-panel { width: 86vw; }
+  .h-panel { width: 80vw; }
 }
 @media (pointer: fine) and (min-width: 721px) { body.has-cursor, body.has-cursor * { cursor: none; } }
 
@@ -743,7 +738,7 @@ html.lenis, html.lenis body { height: auto; }
   width: 250px; max-width: 92vw; height: 42px;
   padding: 0 0.35rem 0 0.95rem; border-radius: 12px; cursor: text;
   background: color-mix(in srgb, var(--bg) 52%, transparent);
-  -webkit-backdrop-filter: blur(16px) saturate(1.5); backdrop-filter: blur(16px) saturate(1.5);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
   border: 1px solid color-mix(in srgb, var(--text) 14%, transparent);
   box-shadow: inset 0 1px 0 color-mix(in srgb, #ffffff 22%, transparent), var(--shadow-sm);
   transition: width 0.55s cubic-bezier(0.34, 1.56, 0.64, 1), border-color var(--dur-1) var(--ease), box-shadow var(--dur-1) var(--ease), background var(--dur-1) var(--ease);
@@ -787,7 +782,7 @@ html.lenis, html.lenis body { height: auto; }
   width: min(440px, 92vw); height: min(68vh, 680px);
   display: flex; flex-direction: column; border-radius: 14px; overflow: hidden;
   background: color-mix(in srgb, var(--bg) 74%, transparent);
-  -webkit-backdrop-filter: blur(26px) saturate(1.7); backdrop-filter: blur(26px) saturate(1.7);
+  -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px);
   border: 1px solid color-mix(in srgb, var(--text) 14%, transparent);
   box-shadow: var(--shadow-lg), inset 0 1px 0 color-mix(in srgb, #ffffff 20%, transparent);
   opacity: 0;
@@ -839,7 +834,7 @@ body.chat-open { overflow: hidden; }
 .veil { position: fixed; inset: 0; z-index: 99990; pointer-events: none; opacity: 0; }
 .veil svg { width: 100%; height: 100%; display: block; }
 .veil__paint { fill: var(--accent); }
-.veil__hole { transform: scale(0.0001); transform-box: fill-box; transform-origin: center; will-change: transform; }
+.veil__hole { transform: scale(0.0001); transform-box: fill-box; transform-origin: center; }
 
 /* Exit: a quick, quiet fade to solid (the hole stays closed — no inward motion).
    Entry: ONE slow outward gesture — the logo aperture opens to reveal the page. */
@@ -876,4 +871,60 @@ html.is-loading::after {
 @media (prefers-reduced-motion: reduce) {
   html.is-loading::before { animation: none; }
   html.is-loading::after { animation: none; width: 170px; }
+}
+
+/* ----------------------------------------------------------------- *
+   24. LANDING PORTAL HERO (themed CSS-3D; nav stays above at z 900+)
+   --pt-p (0→1) scroll progress, --pt-mx/--pt-my cursor — set in JS.
+ * ----------------------------------------------------------------- */
+.pt-stage { height: 300vh; position: relative; }
+.pt-sticky { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; background: var(--bg); }
+.pt-scene { position: absolute; inset: 0; perspective: 1100px; perspective-origin: 50% 45%; background: var(--pt-scene); }
+.pt-inner { position: absolute; inset: 0; transform-style: preserve-3d; transform: translateZ(calc(var(--pt-p) * 1550px)) scale(calc(1 + var(--pt-p) * 0.35)); }
+.pt-layer { position: absolute; border-radius: 10px; overflow: hidden; box-shadow: 0 30px 80px rgba(0,0,0,.45); border: 1px solid rgba(128,128,128,.18); }
+.pt-layer img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pt-l1 { width: 34vw; height: 24vw; left: 9vw;  top: 20vh;    transform: translate3d(calc(var(--pt-mx)*-60px), calc(var(--pt-my)*-40px), -220px); }
+.pt-l2 { width: 26vw; height: 32vw; right: 11vw; top: 14vh;   transform: translate3d(calc(var(--pt-mx)*70px),  calc(var(--pt-my)*46px), -120px); }
+.pt-l3 { width: 22vw; height: 15vw; left: 24vw; top: 54vh;    transform: translate3d(calc(var(--pt-mx)*-36px), calc(var(--pt-my)*-24px), 60px); }
+.pt-l4 { width: 24vw; height: 16vw; right: 18vw; bottom: 10vh; transform: translate3d(calc(var(--pt-mx)*44px),  calc(var(--pt-my)*30px), 10px); }
+.pt-word { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) translateZ(-360px); font-family: var(--font-display); text-transform: uppercase; font-size: 18vw; line-height: 0.8; color: var(--pt-word); letter-spacing: 0.01em; white-space: nowrap; }
+.pt-window { position: absolute; inset: 0; z-index: 5; opacity: calc(1 - clamp(0, (var(--pt-p) - 0.4) * 5, 1)); }
+.pt-window svg { width: 100%; height: 100%; display: block; }
+.pt-paint { fill: var(--bg); }
+.pt-hole { transform-box: fill-box; transform-origin: center; transform: scale(calc(0.42 + var(--pt-p) * 22)); }
+/* deep-space hook — a proposition that surfaces mid-tunnel, then recedes */
+.pt-hook { position: absolute; inset: 0; z-index: 7; display: grid; place-items: center; text-align: center; pointer-events: none;
+  opacity: calc(clamp(0, (var(--pt-p) - 0.5) * 7, 1) - clamp(0, (var(--pt-p) - 0.74) * 8, 1)); }
+.pt-hook .k { display: block; font-family: var(--font-mono); font-size: var(--step--2); letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; }
+.pt-hook__line { font-family: var(--font-display); text-transform: uppercase; font-size: clamp(2.4rem, 7vw, 6rem); line-height: 0.9; letter-spacing: 0.01em; color: var(--bg);
+  transform: scale(calc(0.9 + var(--pt-p) * 0.3)); }
+.pt-hook__line .accent { color: var(--accent); }
+
+/* the next section rises as a solid panel with a convex (arc) top, topping out at --pt-p = 1 */
+.pt-riser { position: absolute; left: 0; bottom: 0; width: 100%; height: calc(100% + 8vh); z-index: 8; background: var(--bg);
+  border-top-left-radius: 50% 8vh; border-top-right-radius: 50% 8vh;
+  transform: translateY(calc((1 - clamp(0, (var(--pt-p) - 0.82) / 0.18, 1)) * 108%)); }
+.pt-riser__in { position: absolute; left: 0; right: 0; top: 46%; transform: translateY(-50%); text-align: center; padding-inline: var(--gutter); }
+.pt-riser__in .k { display: block; font-family: var(--font-mono); font-size: var(--step--2); letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.8rem; }
+.pt-riser__in h2 { font-family: var(--font-display); text-transform: uppercase; font-size: clamp(2.5rem, 8vw, 6rem); line-height: 0.88; letter-spacing: 0.005em; color: var(--text); }
+.pt-riser__cta { display: flex; gap: var(--space-3); justify-content: center; flex-wrap: wrap; margin-top: var(--space-6); }
+@media (prefers-reduced-motion: reduce) { .pt-riser { display: none; } }
+.pt-hud { position: absolute; inset: 0; z-index: 6; pointer-events: none; color: var(--text); opacity: calc(1 - clamp(0, var(--pt-p) * 12, 1)); }
+.pt-hud > * { position: absolute; }
+.pt-intro { left: var(--gutter); bottom: clamp(2rem, 6vh, 4rem); max-width: 42ch; }
+.pt-intro .k { display: block; font-family: var(--font-mono); font-size: var(--step--2); letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.8rem; }
+.pt-intro h1 { font-family: var(--font-display); text-transform: uppercase; font-size: clamp(1.9rem, 4.4vw, 3.2rem); line-height: 0.92; letter-spacing: 0.005em; }
+.pt-intro p { margin-top: 0.9rem; font-size: var(--step--1); color: var(--text-muted); max-width: 36ch; line-height: 1.5; }
+.pt-cue { right: var(--gutter); bottom: clamp(2rem, 6vh, 4rem); font-family: var(--font-mono); font-size: var(--step--2); letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-muted); display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.pt-cue::after { content: ""; width: 1px; height: 34px; background: currentColor; opacity: 0.5; }
+@media (max-width: 720px) {
+  .pt-stage { height: 230vh; }
+  .pt-word { font-size: 30vw; }
+  .pt-intro h1 { font-size: clamp(1.6rem, 8vw, 2.4rem); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pt-stage { height: 100vh; }
+  .pt-sticky { position: relative; }
+  .pt-inner { transform: none; }
+  .pt-scene { opacity: 1; }
 }
